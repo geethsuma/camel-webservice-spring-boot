@@ -1,0 +1,12 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://example.test.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <exam:createProductType>
+         <exam:productType>
+            <exam:name>NEW_BUSINESS_PRODUCT</exam:name>
+            <exam:id>TEST1232</exam:id>
+            <exam:productAvailabilityStatus>availableForNewBusiness</exam:productAvailabilityStatus>
+         </exam:productType>
+      </exam:createProductType>
+   </soapenv:Body>
+</soapenv:Envelope>

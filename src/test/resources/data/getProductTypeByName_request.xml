@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://example.test.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <exam:getProductTypeByName>
+         <exam:name>TestProductType</exam:name>
+      </exam:getProductTypeByName>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~ Copyright 2012 Red Hat
+~
+~    Licensed under the Apache License, Version 2.0 (the "License");
+~    you may not use this file except in compliance with the License.
+~    You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~    Unless required by applicable law or agreed to in writing, software
+~    distributed under the License is distributed on an "AS IS" BASIS,
+~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~    See the License for the specific language governing permissions and
+~    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+  		   http://www.springframework.org/schema/beans/spring-beans.xsd
+  		 http://camel.apache.org/schema/spring
+		     http://camel.apache.org/schema/spring/camel-spring.xsd
+		   http://camel.apache.org/schema/cxf
+		     http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+
+  <cxf:cxfEndpoint id="productWS"
+                   address="/camel-example/ProductService"
+                   serviceClass="org.test.example.ProductService">
+    <cxf:outInterceptors>
+      <ref bean="loggingOutInterceptor"/>
+    </cxf:outInterceptors>
+    <cxf:inInterceptors>
+      <ref bean="loggingInInterceptor"/>
+    </cxf:inInterceptors>
+    <cxf:properties>
+            <entry key="schema-validation-enabled" value="true" />
+    </cxf:properties>
+  </cxf:cxfEndpoint>
+
+  <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+  <bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+
+  <bean id="productServiceBean" class="com.test.product.ProductServiceImpl"
+        init-method="initaliseProductTypes"/>
+
+  <camelContext trace="false" xmlns="http://camel.apache.org/schema/spring">
+    <route id="product-webservice">
+      <from uri="cxf:bean:productWS"/>
+      <choice>
+        <when>
+          <simple>${header.operationName} == 'createProductType'</simple>
+          <log message="Creates a new ProductType"/>
+          <bean method="createProductType" ref="productServiceBean"/>
+        </when>
+        <when>
+          <simple>${header.operationName} == 'getProductTypeByName'</simple>
+          <log message="Get matched producttype"/>
+          <bean method="getProductTypeByName" ref="productServiceBean"/>
+        </when>
+        <when>
+          <simple>${header.operationName} == 'getAllProductTypes'</simple>
+          <log message="Get all available productTypes"/>
+          <bean method="getAllProductTypes" ref="productServiceBean"/>
+        </when>
+         <otherwise>
+           <log message="Unknown Operation" loggingLevel="ERROR" />
+        </otherwise>
+      </choice>
+    </route>
+
+  </camelContext>
+
+</beans>

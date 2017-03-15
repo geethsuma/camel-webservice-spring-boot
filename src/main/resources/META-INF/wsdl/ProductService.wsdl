@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ProductService"
+                  targetNamespace="http://example.test.org/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:tns="http://example.test.org/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:tns="http://example.test.org/"
+                   elementFormDefault="qualified"
+                   targetNamespace="http://example.test.org/">
+
+            <!-- Entity definition -->
+            <xs:complexType name="ProductType">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" type="xs:string"/>
+                    <xs:element minOccurs="0" name="id" type="xs:string"/>
+                    <xs:element minOccurs="0" name="productAvailabilityStatus" type="tns:productAvailabilityEnum"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="productAvailabilityEnum">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="availableForNewBusiness"/>
+                    <xs:enumeration value="notCurrentlySold"/>
+                </xs:restriction>
+            </xs:simpleType>
+
+            <!-- Methods -->
+            <xs:element name="getProductTypeByName" type="tns:getProductTypeByName"/>
+            <xs:complexType name="getProductTypeByName">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:element name="getProductTypeByNameResponse" type="tns:getProductTypeByNameResponse"/>
+            <xs:complexType name="getProductTypeByNameResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="productType" type="tns:ProductType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:element name="getAllProductTypes"/>
+
+            <xs:element name="getAllProductTypesResponse" type="tns:getAllProductTypesResponse"/>
+            <xs:complexType name="getAllProductTypesResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="productType" type="tns:ProductType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:element name="createProductType" type="tns:createProductType"/>
+
+            <xs:element name="createProductTypeResponse" type="tns:createProductType"/>
+            <xs:complexType name="createProductType">
+                <xs:sequence>
+                    <xs:element name="productType" type="tns:ProductType"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:element name="NoSuchProductType" type="tns:NoSuchProductType"/>
+            <xs:complexType name="NoSuchProductType">
+                <xs:sequence>
+                    <xs:element name="productTypeId" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:element name="NotAuthorizedUser" type="tns:NotAuthorizedUser"/>
+            <xs:complexType name="NotAuthorizedUser">
+                <xs:sequence>
+                    <xs:element name="user" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="getProductTypeByName">
+        <wsdl:part name="parameters" element="tns:getProductTypeByName"/>
+    </wsdl:message>
+    <wsdl:message name="getProductTypeByNameResponse">
+        <wsdl:part name="parameters" element="tns:getProductTypeByNameResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="getAllProductTypes"/>
+    <wsdl:message name="getAllProductTypesResponse">
+        <wsdl:part name="parameters" element="tns:getAllProductTypesResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="createProductTypeRequest">
+        <wsdl:part name="parameters" element="tns:createProductType"/>
+    </wsdl:message>
+    <wsdl:message name="createProductTypeResponse">
+        <wsdl:part name="parameters" element="tns:createProductTypeResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="NoSuchProductTypeFault">
+        <wsdl:part name="NoSuchProductTypeFault" element="tns:NoSuchProductType"/>
+    </wsdl:message>
+
+    <wsdl:message name="NotAuthorizedUserFault">
+        <wsdl:part name="NotAuthorizedUserFault" element="tns:NotAuthorizedUser"/>
+    </wsdl:message>
+
+    <wsdl:portType name="ProductService">
+        <wsdl:operation name="getProductTypeByName">
+            <wsdl:input name="getProductTypeByName" message="tns:getProductTypeByName"/>
+            <wsdl:output name="getProductTypeByNameResponse" message="tns:getProductTypeByNameResponse"/>
+            <wsdl:fault name="NoSuchProductTypeFault" message="tns:NoSuchProductTypeFault"/>
+            <wsdl:fault name="NotAuthorizedUserFault" message="tns:NotAuthorizedUserFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="getAllProductTypes">
+            <wsdl:input message="tns:getAllProductTypes"/>
+            <wsdl:output message="tns:getAllProductTypesResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="createProductType">
+            <wsdl:input name="createProductTypeRequest" message="tns:createProductTypeRequest"/>
+            <wsdl:output name="createProductTypeResponse" message="tns:createProductTypeResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="ProductServiceServiceSoapBinding"
+                  type="tns:ProductService">
+
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="getProductTypeByName">
+            <soap:operation
+                    soapAction="http://example.test.org/getProductTypeByName"/>
+            <wsdl:input name="getProductTypeByName">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getProductTypeByNameResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="NoSuchProductTypeFault">
+                <soap:fault use="literal" name="NoSuchProductTypeFault"/>
+            </wsdl:fault>
+            <wsdl:fault name="NotAuthorizedUserFault">
+                <soap:fault use="literal" name="NotAuthorizedUserFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="getAllProductTypes">
+            <soap:operation soapAction="http://example.test.org/getAllProductTypes"/>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="createProductType">
+            <soap:operation soapAction="http://example.test.org/createProductType"/>
+            <wsdl:input name="createProductTypeRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="createProductTypeResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ProductService">
+        <wsdl:port name="ProductServicePort" binding="tns:ProductServiceServiceSoapBinding">
+            <soap:address location="http://localhost:8888/ProductServicePort"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
